@@ -18,7 +18,7 @@ import java.util.Set;
 
 public class Minibrowser {
     public static void main(String[] args) throws Exception {
-        String url = "http://www.gov.cn/zhengce/2021-04/05/content_5597861.htm";
+        String url = "http://static.how2j.cn/diytomcat.html";
         String contentString= getContentString(url);
         System.out.println(contentString);
         String httpString= getHttpString(url);
@@ -33,6 +33,8 @@ public class Minibrowser {
      * 最关键的是PrintWriter里的autoflush,要不然会卡住 (其实用socket的flush也可，
      *  最最关键是最后一定要输出一个\n
      * )
+     *
+     * 还有关键点，不能用baos.write(buff,0,len);
      *
      * @return
      * @throws Exception
