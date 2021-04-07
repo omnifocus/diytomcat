@@ -81,11 +81,11 @@ public class Minibrowser {
 //            baos.write(bs,0,len);
 //        }
       while (true) {
-          int length = is.read(buffer);
-          if(-1==length)
+          len = is.read(buffer);
+          if(-1==len)
               break;
-          baos.write(buffer, 0, length);
-          if(length!=buffer_size)
+          baos.write(buffer, 0, len);
+          if(len!=buffer_size)
               break;
       }
         byte[] result = baos.toByteArray();
