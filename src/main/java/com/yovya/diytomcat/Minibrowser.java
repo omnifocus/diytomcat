@@ -1,14 +1,7 @@
 package com.yovya.diytomcat;
 
-import com.sun.tools.internal.ws.wsdl.document.Input;
-import com.sun.tools.internal.ws.wsdl.document.Output;
-
-import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.InetSocketAddress;
-import java.net.MalformedURLException;
 import java.net.Socket;
 import java.net.URL;
 import java.util.Arrays;
@@ -73,24 +66,7 @@ public class Minibrowser {
 //        pWriter.print(reqContent);
 
         InputStream is = socket.getInputStream();
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        int buffer_size = 1024;
-        byte[] buffer = new byte[buffer_size];
-        int len = -1;
-//        while((len = is.read(bs)) != -1) {
-//            baos.write(bs,0,len);
-//        }
-      while (true) {
-          len = is.read(buffer);
-          if(-1==len)
-              break;
-          baos.write(buffer, 0, len);
-          if(len!=buffer_size)
-              break;
-      }
-        byte[] result = baos.toByteArray();
-        baos.flush();
-        baos.close();
+        byte[] result =readBytes(is);
         is.close();
         os.close();
         socket.close();
@@ -131,5 +107,26 @@ public class Minibrowser {
 
     public static String getContentString(String _url) throws Exception {
         return new String(getContentBytes(_url));
+    }
+
+
+    public static byte[] readBytes(InputStream is) throws IOException {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        int buffer_size = 1024;
+        byte[] buffer = new byte[buffer_size];
+        int len = -1;
+//        while((len = is.read(bs)) != -1) {
+//            baos.write(bs,0,len);
+//        }
+        while (true) {
+            len = is.read(buffer);
+            if(-1==len)
+                break;
+            baos.write(buffer, 0, len);
+            if(len!=buffer_size)
+                break;
+        }
+        byte[] result = baos.toByteArray();
+        return result;
     }
 }
