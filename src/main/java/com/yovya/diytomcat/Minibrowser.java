@@ -58,6 +58,7 @@ public class Minibrowser {
         for (String key : keys) {
             headerLine += key + ":" + headerMap.get(key) + "\r\n";
         }
+        //最后的\n
         String reqContent = firstLine + headerLine + "\n";
         OutputStream os = socket.getOutputStream();
         os.write(reqContent.getBytes());

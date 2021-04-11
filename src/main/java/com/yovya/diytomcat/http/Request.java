@@ -4,14 +4,21 @@ import cn.hutool.core.util.StrUtil;
 import com.yovya.diytomcat.Minibrowser;
 
 import java.io.IOException;
-import java.io.InputStream;
+import java.net.Socket;
 
 public class Request {
     private String uri;
     private String requestString;
+    private Socket socket;
 
-    private void parseRequestString(InputStream is) throws IOException {
-        requestString = new String(Minibrowser.readBytes(is));
+    public Request(Socket socket) throws IOException {
+        this.socket = socket;
+        parseRequestString();
+        parseUri();
+    }
+
+    private void parseRequestString() throws IOException {
+        requestString = new String(Minibrowser.readBytes(socket.getInputStream()));
     }
 
     private void parseUri() throws IOException{
@@ -23,10 +30,6 @@ public class Request {
         uri = StrUtil.subBefore(tmp,'?',true);
     }
 
-    public void parse(InputStream is) throws IOException{
-        parseRequestString(is);
-        parseUri();
-    }
 
     public String getUri() {
         return uri;
