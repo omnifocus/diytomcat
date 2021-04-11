@@ -40,7 +40,7 @@ public class Bootstrap {
     }
 
     private static void handle200(Response response, Socket s) throws IOException {
-        byte[] headerbytes = String.format(util.response_head_202,"text/html").getBytes();
+        byte[] headerbytes = String.format(util.response_head_202,response.getContentType()).getBytes();
         byte[] bodybytes = response.getBytes();
         byte[] responsebytes = new byte[headerbytes.length + bodybytes.length];
         System.arraycopy(headerbytes,0,responsebytes,0,headerbytes.length);
