@@ -1,5 +1,7 @@
+import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.StrUtil;
 import com.yovya.diytomcat.Minibrowser;
+import com.yovya.diytomcat.util;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -8,7 +10,7 @@ public class TestTomcat {
     static int port = 8880;
 //    static String ip = "static.how2j.cn";
     static String ip = "localhost";
-    static String uri = "/diytomcat.html";
+    static String uri = "/index.html";
     @BeforeClass
     public static void before() {
 //        if (NetUtil.isUsableLocalPort(port)) {
@@ -35,5 +37,11 @@ public class TestTomcat {
     public void testHelloTomcat() {
         String result = getContent();
         Assert.assertEquals(result,"This is a msg from server...\n");
+    }
+
+    @Test
+    public void testFileUitl() {
+        System.out.println(util.ROOT);
+        System.out.println(FileUtil.exist(util.ROOT,"index.html"));
     }
 }
