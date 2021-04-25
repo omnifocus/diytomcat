@@ -2,6 +2,8 @@ package com.yovya.diytomcat;
 
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.StrUtil;
+import cn.hutool.log.LogFactory;
+import cn.hutool.system.SystemUtil;
 import com.yovya.diytomcat.http.Request;
 import com.yovya.diytomcat.http.Response;
 
@@ -11,10 +13,13 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Set;
 
 public class Bootstrap {
     public static void main(String[] args) {
-        System.out.println("server启动了");
+        logJVM();
         try (ServerSocket ss = new ServerSocket(8880)) {
            while (true) {
                Socket s = ss.accept();
@@ -36,10 +41,14 @@ public class Bootstrap {
                     http_body = "This is a msg from server...";
                else {
                    String path = StrUtil.removePrefix(uri,"/");
-                   if (!FileUtil.exist(util.ROOT,path)) {
+                   File f = FileUtil.file(util.ROOT,path);
+                   if (!f.exists()) {
                        http_body = "404!";
                    } else {
-                       http_body = FileUtil.readUtf8String(new File(util.ROOT,path));
+                       if (f.getName().equals("timeConsume.html")) {
+                        Thread.sleep(1000);
+                       }
+                       http_body = FileUtil.readUtf8String(f);
                    }
                }
 
@@ -52,7 +61,10 @@ public class Bootstrap {
                s.close();
            }
         } catch (Exception e) {
-            e.printStackTrace();
+            // TODO
+            LogFactory.get().error(e);
+
+
         }
     }
 
@@ -69,5 +81,21 @@ public class Bootstrap {
         os.close();
     }
 
+    private static void logJVM() {
+        Map<String,String> infos = new LinkedHashMap<>();
+        infos.put("Server version", "How2J DiyTomcat/1.0.1");
+        infos.put("Server built", "2020-04-08 10:20:22");
+        infos.put("Server number", "1.0.1");
+        infos.put("OS Name\t", SystemUtil.get("os.name"));
+        infos.put("OS Version", SystemUtil.get("os.version"));
+        infos.put("Architecture", SystemUtil.get("os.arch"));
+        infos.put("Java Home", SystemUtil.get("java.home"));
+        infos.put("JVM Version", SystemUtil.get("java.runtime.version"));
+        infos.put("JVM Vendor", SystemUtil.get("java.vm.specification.vendor"));
+        Set<String> keys = infos.keySet();
+        for (String key : keys) {
+            LogFactory.get().info(key+":\t\t" + infos.get(key));
+        }
+    }
 
 }
