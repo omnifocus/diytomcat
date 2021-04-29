@@ -3,7 +3,7 @@ import cn.hutool.core.date.TimeInterval;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.StrUtil;
 import com.yovya.diytomcat.Minibrowser;
-import com.yovya.diytomcat.util;
+import com.yovya.diytomcat.Util;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -16,7 +16,7 @@ public class TestTomcat {
     static int port = 8880;
 //    static String ip = "static.how2j.cn";
     static String ip = "localhost";
-    static String uri = "/timeConsume.html";
+    static String uri = "/A/test.html";
     @BeforeClass
     public static void before() {
 //        if (NetUtil.isUsableLocalPort(port)) {
@@ -42,13 +42,20 @@ public class TestTomcat {
     @Test
     public void testHelloTomcat() {
         String result = getContent();
-        Assert.assertEquals(result,"This is a msg from server...\n");
+        Assert.assertEquals(result,"Hello DIY Tomcat from timeConsume.html\n");
     }
 
     @Test
     public void testFileUitl() {
-        System.out.println(util.ROOT);
-        System.out.println(FileUtil.exist(util.ROOT,"index.html"));
+        System.out.println(Util.ROOT);
+        System.out.println(FileUtil.exist(Util.ROOT,"index.html"));
+    }
+
+    @Test
+    public void testStrUitl() {
+        String str = "/a";
+        String res = StrUtil.subBetween(str,"/","/");
+        System.out.println(res);
     }
 
     @Test
@@ -68,7 +75,7 @@ public class TestTomcat {
         //关闭线程池后才有效果
         executor.shutdown();
         executor.awaitTermination(1,TimeUnit.HOURS);
-        Assert.assertTrue(ti.intervalMs()>3000);
+        Assert.assertTrue(ti.intervalMs()<3000);
 
     }
 }
