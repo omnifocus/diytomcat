@@ -9,6 +9,8 @@ import java.util.concurrent.TimeUnit;
 public class Util {
     public static final String response_head_202 = "HTTP/1.1 200 OK\r\n Content-Type:{}\r\n\r\n";
     public static final String WEB_APP_FOLDER = System.getProperty("user.dir") + "/webapps";
+    public static final String CONF_FOLDER = System.getProperty("user.dir") + "/conf";
+    public static final String SERVER_XML = CONF_FOLDER + "/server.xml" ;
     public static final String ROOT = WEB_APP_FOLDER + "/ROOT/";
     private static final ThreadPoolExecutor executor = new ThreadPoolExecutor(20,30,60, TimeUnit.SECONDS,new LinkedBlockingQueue<Runnable>(10));
     public static void run(Runnable task) {

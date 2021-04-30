@@ -7,6 +7,10 @@ import cn.hutool.system.SystemUtil;
 import com.yovya.diytomcat.catalina.Context;
 import com.yovya.diytomcat.http.Request;
 import com.yovya.diytomcat.http.Response;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 import java.io.File;
 import java.io.IOException;
@@ -24,6 +28,7 @@ public class Bootstrap {
     public static void main(String[] args) {
         logJVM();
         loadContextPath();
+        scannServerXml();
         try (ServerSocket ss = new ServerSocket(8880)) {
            while (true) {
                Socket s = ss.accept();
@@ -40,14 +45,15 @@ public class Bootstrap {
 //               String http_head = "HTTP/1.1 200 OK\r\n Content-Type:text/html\r\n\r\n";
 //               String http_body = "This is a msg from server...";
 //               outputStream.write((http_head + http_body).getBytes());
-
+                          String http_body;
                           String uri = request.getUri();
-                          String fileName = StrUtil.subAfter(uri,"/",true);
-                          if (fileName == null || fileName.equals("")) {
-                              fileName = "index.html";
+                          if ("/".equals(uri)) {
+                              http_body = "This is a msg from server...";
+                          } else {
+
+                              String path = new File(request.getContext().getDocBase(), StrUtil.removePrefix(uri,"/")).getPath();
+                              http_body = FileUtil.readUtf8String(path);
                           }
-                          String path = new File(request.getContext().getDocBase(),fileName).getPath();
-                          String http_body = FileUtil.readUtf8String(path);
                           Response response = new Response();
                           response.getWriter().println(http_body);
                           handle200(response,s);
@@ -72,6 +78,16 @@ public class Bootstrap {
         }
     }
 
+    private static void scannServerXml() {
+        // 文件保存为字符串
+        String xml = FileUtil.readUtf8String(Util.SERVER_XML);
+        Document doc = Jsoup.parse(xml);
+        Elements contexts = doc.select("context");
+        for (Element e : contexts) {
+            contextMap.put(e.attr("path"),new Context(e.attr("path"),e.attr("docBase")));
+        }
+    }
+
     // 混杂着 / 和 不带/的文件名
     private static void loadContextPath() {
         String webRoot = Util.WEB_APP_FOLDER;
@@ -79,11 +95,14 @@ public class Bootstrap {
         File[] files = file.listFiles();
         for (File f : files) {
             if (f.isDirectory()) {
-                String path = StrUtil.subAfter(f.getPath(),"/",true);
+                String name = f.getName();
+                String path = "/";
+                if (!"ROOT".equals(name)) {
+                    path = path + name;
+                }
                 contextMap.put(path,new Context(path,f.getAbsolutePath()));
             }
         }
-        contextMap.put("/",new Context("/",Util.ROOT));
     }
 
     private static void handle200(Response response, Socket s) throws IOException {

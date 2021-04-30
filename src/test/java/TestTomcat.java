@@ -16,7 +16,7 @@ public class TestTomcat {
     static int port = 8880;
 //    static String ip = "static.how2j.cn";
     static String ip = "localhost";
-    static String uri = "/A/test.html";
+    static String uri = "/xx/index.html";
     @BeforeClass
     public static void before() {
 //        if (NetUtil.isUsableLocalPort(port)) {

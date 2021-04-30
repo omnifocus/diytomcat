@@ -21,16 +21,16 @@ public class Request {
     }
 
     private void configureContext() {
-        String tmp = StrUtil.subBetween(uri,"/","/");
-        if (tmp == null) {
-            tmp = "/";
+        String name = StrUtil.subBetween(uri,"/","/");
+        if (name == null) {
+            name = "";
+        }
+        String path = "/" + name;
+        context = Bootstrap.contextMap.get(path);
+        if (!path.equals("/")) {
+            uri = StrUtil.removePrefix(uri,path);
         }
 
-        context = Bootstrap.contextMap.get(tmp);
-        if (context == null) {
-            tmp = "/";
-            context = Bootstrap.contextMap.get(tmp);
-        }
 
 
 
