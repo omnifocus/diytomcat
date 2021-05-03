@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <server>
-    <context path="/xx" docBase="/Users/love/Documents/owndata/new_starter/diytomcat/webapps/A"></context>
+    <host name="localhost">
+        <context path="/xx" docBase="/Users/love/Dropbox/owndata/new_starter/diytomcat/webapps/A"></context>
+    </host>
 </server>

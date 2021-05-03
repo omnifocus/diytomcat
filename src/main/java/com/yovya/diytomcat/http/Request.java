@@ -1,9 +1,9 @@
 package com.yovya.diytomcat.http;
 
 import cn.hutool.core.util.StrUtil;
-import com.yovya.diytomcat.Bootstrap;
 import com.yovya.diytomcat.Minibrowser;
 import com.yovya.diytomcat.catalina.Context;
+import com.yovya.diytomcat.catalina.Host;
 
 import java.io.IOException;
 import java.net.Socket;
@@ -13,7 +13,9 @@ public class Request {
     private String requestString;
     private Socket socket;
     private Context context;
-    public Request(Socket socket) throws IOException {
+    private Host host;
+    public Request(Host host, Socket socket) throws IOException {
+        this.host = host;
         this.socket = socket;
         parseRequestString();
         parseUri();
@@ -26,7 +28,7 @@ public class Request {
             name = "";
         }
         String path = "/" + name;
-        context = Bootstrap.contextMap.get(path);
+        context = host.getContextMap().get(path);
         if (!path.equals("/")) {
             uri = StrUtil.removePrefix(uri,path);
         }
