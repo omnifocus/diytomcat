@@ -13,6 +13,7 @@ public class Engine {
         //一初始化 就 给两个属性赋值
         this.defaultHost = getDefaultHost();
         this.hosts = XmlUtil.getAllHosts(this);
+        checkDefaultHost();
     }
 
     public Host getDefaultHost() {
@@ -22,7 +23,13 @@ public class Engine {
                 return h;
             }
         }
-        throw new RuntimeException("找不到默认的主机");
+        return null;
+
+    }
+
+    private void checkDefaultHost() {
+        if (defaultHost == null)
+            throw new RuntimeException("找不到默认的主机");
     }
 
     public void setDefaultHost(Host defaultHost) {
