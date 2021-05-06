@@ -11,12 +11,19 @@ import java.util.Map;
 
 public class Host {
     private String name;
+    private Engine engine;
     private Map<String,Context> contextMap = new HashMap<>();
+
+    public Host(String name,Engine engine) {
+        this();
+        this.name = name;
+        this.engine = engine;
+    }
 
     public Host() {
         loadContextPath();
         handleContexts(XmlUtil.scannServerXml());
-        this.name = XmlUtil.getHostName();
+//        this.name = XmlUtil.getHostName();
     }
 
     public String getName() {
@@ -29,6 +36,10 @@ public class Host {
 
     public Map<String, Context> getContextMap() {
         return contextMap;
+    }
+
+    public Context getContext(String path) {
+        return contextMap.get(path);
     }
 
     public void setContextMap(Map<String, Context> contextMap) {
