@@ -7,10 +7,11 @@ import java.util.List;
 public class Engine {
     private Host defaultHost;
     private List<Host> hosts;
+    private Service service;
 
 
-    public Engine() {
-        //一初始化 就 给两个属性赋值
+    public Engine(Service service) {
+        this.service = service;
         this.defaultHost = getDefaultHost();
         this.hosts = XmlUtil.getAllHosts(this);
         checkDefaultHost();

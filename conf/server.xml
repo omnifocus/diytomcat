@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <server>
-    <engine defaultHost="localhost">
-        <host name="localhost">
-            <context path="/xx" docBase="/Users/love/Dropbox/owndata/new_starter/diytomcat/webapps/A"></context>
-        </host>
-    </engine>
+    <service name="catalina">
+        <engine defaultHost="localhost">
+            <host name="localhost">
+                <context path="/xx" docBase="/Users/love/Dropbox/owndata/new_starter/diytomcat/webapps/A"></context>
+            </host>
+        </engine>
+    </service>
 </server>

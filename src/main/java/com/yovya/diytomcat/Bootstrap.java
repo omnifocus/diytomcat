@@ -4,7 +4,7 @@ import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.log.LogFactory;
 import cn.hutool.system.SystemUtil;
-import com.yovya.diytomcat.catalina.Engine;
+import com.yovya.diytomcat.catalina.Service;
 import com.yovya.diytomcat.http.Request;
 import com.yovya.diytomcat.http.Response;
 
@@ -21,7 +21,7 @@ import java.util.Set;
 public class Bootstrap {
     public static void main(String[] args) {
         logJVM();
-        Engine engine = new Engine();
+        Service service = new Service();
         try (ServerSocket ss = new ServerSocket(8880)) {
            while (true) {
                Socket s = ss.accept();
@@ -30,7 +30,7 @@ public class Bootstrap {
                    public void run() {
                       try {
                           InputStream is = s.getInputStream();
-                          Request request = new Request(engine,s);
+                          Request request = new Request(service,s);
                           System.out.println("服务端收到的uri:" + request.getUri());
                           System.out.println("服务端收到数据：" + new String(request.getRequestString()));
 

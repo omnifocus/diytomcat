@@ -12,11 +12,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class XmlUtil {
-    public static String getHostName() {
+    public static String getServiceName() {
         String path = Util.CONF_FOLDER + "/" + "server.xml";
         String xmlContent = FileUtil.readUtf8String(path);
         Document doc = Jsoup.parse(xmlContent);
-        Element e = doc.select("host").first();
+        Element e = doc.select("service").first();
         return e.attr("name");
     }
 
@@ -50,4 +50,5 @@ public class XmlUtil {
         }
         return hosts;
     }
+
 }

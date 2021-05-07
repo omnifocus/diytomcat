@@ -4,8 +4,6 @@ import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.StrUtil;
 import com.yovya.diytomcat.Minibrowser;
 import com.yovya.diytomcat.Util;
-import com.yovya.diytomcat.XmlUtil;
-import com.yovya.diytomcat.catalina.Engine;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -51,7 +49,6 @@ public class TestTomcat {
     public void testFileUitl() {
         System.out.println(Util.ROOT);
         System.out.println(FileUtil.exist(Util.ROOT,"index.html"));
-        System.out.println(XmlUtil.getDefaultHostName(new Engine()));
     }
 
     @Test
