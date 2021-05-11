@@ -43,12 +43,23 @@ public class XmlUtil {
         String xml = FileUtil.readUtf8String(Util.SERVER_XML);
         Document doc = Jsoup.parse(xml);
         Elements es = doc.select("host");
-        for (Element e: es) {
+        for (Element e : es) {
             //拿出name和传入的engine
-            Host host = new Host(e.attr("name"),engine);
+            Host host = new Host(e.attr("name"), engine);
             hosts.add(host);
         }
         return hosts;
+    }
+
+    public static List<String> getDefaultFiles() {
+        List<String> list = new ArrayList<>();
+        String xml = FileUtil.readUtf8String(Util.WEB_XML);
+        Document doc = Jsoup.parse(xml);
+        Elements es = doc.select("welcome-file");
+        es.forEach((e) -> {
+            list.add(e.text());
+        });
+        return list;
     }
 
 }

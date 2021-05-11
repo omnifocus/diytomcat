@@ -8,6 +8,7 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import java.util.Arrays;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -16,7 +17,7 @@ public class TestTomcat {
     static int port = 8880;
 //    static String ip = "static.how2j.cn";
     static String ip = "localhost";
-    static String uri = "/A/test.html";
+    static String uri = "/A/";
     @BeforeClass
     public static void before() {
 //        if (NetUtil.isUsableLocalPort(port)) {
@@ -42,7 +43,10 @@ public class TestTomcat {
     @Test
     public void testHelloTomcat() {
         String result = getContent();
+//        System.out.println(result);
         Assert.assertEquals(result,"Hello DIY Tomcat from timeConsume.html\n");
+//        Assert.assertEquals(result,"Hello DIY Tomcat from timeConsume.html\n");
+//        Assert.assertTrue(result.contains("a deliberately thrown error"));
     }
 
     @Test
@@ -78,4 +82,22 @@ public class TestTomcat {
         Assert.assertTrue(ti.intervalMs()<3000);
 
     }
+
+    @Test
+    public void testException() {
+        try {
+            int i = 1 / 0;
+        } catch (Exception e) {
+            //打印带Exception + msg
+            System.out.println(e.toString());
+            System.out.println(e.getMessage());
+            final StackTraceElement[] stackTrace = e.getStackTrace();
+            //打印每层的堆栈信息
+            Arrays.stream(stackTrace).forEach((s)->{
+                System.out.println(s);
+            });
+        }
+    }
+
+
 }

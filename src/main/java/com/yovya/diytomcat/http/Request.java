@@ -7,6 +7,7 @@ import com.yovya.diytomcat.catalina.Service;
 
 import java.io.IOException;
 import java.net.Socket;
+import java.util.Arrays;
 
 public class Request {
     private String uri;
@@ -24,7 +25,39 @@ public class Request {
         configureContext();
     }
 
+
     private void configureContext() {
+        String name = StrUtil.subBetween(uri, "/", "/");
+        String path = "/";
+        if (name == null) {
+            //可能是a
+            path = uri;
+            //不是文件且path不是/,否则会变为//
+            if (!uri.contains(".") ) {
+                //  后面加上/
+                path = uri ;
+            } else {
+                //可能是a.html
+                path = "/";
+                //默认uri也不变
+            }
+        } else
+             path = "/" + name;
+//        context = host.getContextMap().get(path);
+        context = service.getEngine().getDefaultHost().getContext(path);
+        if (!path.equals("/")) {
+            uri = StrUtil.removePrefix(uri, path);
+        }
+    }
+
+    public static void main(String[] args) {
+        int[] as  =  {1};
+       int[] as2 =  Arrays.copyOf(as,as.length);
+        System.out.println(Arrays.equals(as,as2));
+        System.out.println(as == as2);
+    }
+
+    private void configureContext2() {
         String name = StrUtil.subBetween(uri,"/","/");
         if (name == null) {
             name = "";

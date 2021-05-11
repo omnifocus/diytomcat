@@ -12,13 +12,14 @@ public class Engine {
 
     public Engine(Service service) {
         this.service = service;
-        this.defaultHost = getDefaultHost();
         this.hosts = XmlUtil.getAllHosts(this);
+        //这行放在下面，不用查第二遍
+        this.defaultHost = getDefaultHost();
         checkDefaultHost();
     }
 
     public Host getDefaultHost() {
-        List<Host> hosts = XmlUtil.getAllHosts(this);
+        List<Host> hosts = this.hosts;
         for (Host h: hosts) {
             if ("localhost".equals(h.getName())) {
                 return h;
