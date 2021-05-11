@@ -14,7 +14,10 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.*;
+import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Set;
 
 public class Server {
     private Service service;
@@ -45,7 +48,7 @@ public class Server {
                     @Override
                     public void run() {
                         try {
-                            Request request = new Request(service,s);
+                            Request request = new Request(service, s);
                             System.out.println("服务端收到的uri:" + request.getUri());
                             System.out.println("服务端收到数据：" + new String(request.getRequestString()));
 
@@ -54,45 +57,39 @@ public class Server {
 //               String http_body = "This is a msg from server...";
 //               outputStream.write((http_head + http_body).getBytes());
                             String http_body;
-                            Context context = request.getContext();
-                            String path = context.getPath();
-                            String docBase = context.getDocBase();
                             String uri = request.getUri();
                             if ("/500.html".equals(uri)) {
                                 throw new RuntimeException("a deliberately thrown error");
                             }
-                            //此处对uri做统一处理
-                            uri = StrUtil.isEmpty(uri) ? "" : StrUtil.removePrefix(request.getUri(), "/");
-                            //如果属于 /a这种的
-                                if (StrUtil.isEmpty(uri)) {
-                                    List<String> welcomeFiles = XmlUtil.getDefaultFiles();
-                                    for (String wf : welcomeFiles) {
-                                        if (new File(docBase, wf).exists()) {
-                                            uri = wf;
-                                            break;
-                                        }
-                                    }
-                                }
+                            String path;
+                            Context context = request.getContext();
+                            if ("/".equals(uri)) {
                                 //如果配置文件没有设置欢迎文件,以空返回
-                            if (StrUtil.isEmpty(uri)) {
-                                    http_body = " ";
-                                } else {
+                                path = XmlUtil.getDefaultFile(context);
+                            }
+                            //如果uri不包括prefix,返回原uri
+                            path = StrUtil.removePrefix(uri, "/");
 
-                                    File f = new File(docBase, uri);
-                                    if (!f.exists()) {
-                                        handle404(s, uri);
-                                        return;
-                                    }
+                            File f = new File(context.getDocBase(), path);
+                            if (!f.exists()) {
+                                handle404(s, uri);
+                                return;
+                            }
 
-                                    String filePath = f.getPath();
-                                    http_body = FileUtil.readUtf8String(filePath);
-                                }
-                                Response response = new Response();
-                                response.getWriter().println(http_body);
-                                handle200(response, s);
+
+                            String filePath = f.getPath();
+                            http_body = FileUtil.readUtf8String(filePath);
+                            Response response = new Response();
+
+                            String ext = StrUtil.subAfter(path, ".", true);
+                            String contentType = XmlUtil.getMimeType(ext);
+                            response.setContentType(contentType);
+
+                            response.getWriter().println(http_body);
+                            handle200(response, s);
 
                         } catch (Exception e) {
-                            handle500(s,e);
+                            handle500(s, e);
                             LogFactory.get().error(e);
                         } finally {
                             //关闭流
@@ -125,8 +122,10 @@ public class Server {
         String msg2 = e.getMessage();
         sb.append(msg1 + "\n");
         //每条堆栈信息
-        Arrays.stream(e.getStackTrace()).forEach((msg) -> {sb.append(msg + "\n");});
-        String resp_body = StrUtil.format(Util.textFormat_500,msg1,msg2,sb.toString());
+        Arrays.stream(e.getStackTrace()).forEach((msg) -> {
+            sb.append(msg + "\n");
+        });
+        String resp_body = StrUtil.format(Util.textFormat_500, msg1, msg2, sb.toString());
         try {
             s.getOutputStream().write((resp_head + resp_body).getBytes());
         } catch (IOException ioException) {
@@ -134,28 +133,29 @@ public class Server {
         }
     }
 
-    private  void handle200(Response response, Socket s) throws IOException {
-        byte[] headerbytes = String.format(Util.response_head_202,response.getContentType()).getBytes();
+    private void handle200(Response response, Socket s) throws IOException {
+        byte[] headerbytes = StrUtil.format(Util.response_head_202, response.getContentType()).getBytes();
         byte[] bodybytes = response.getBytes();
         //把上面两个字节数组拼出来
         byte[] responsebytes = new byte[headerbytes.length + bodybytes.length];
-        System.arraycopy(headerbytes,0,responsebytes,0,headerbytes.length);
-        System.arraycopy(bodybytes,0,responsebytes,headerbytes.length,bodybytes.length);
+        System.arraycopy(headerbytes, 0, responsebytes, 0, headerbytes.length);
+        System.arraycopy(bodybytes, 0, responsebytes, headerbytes.length, bodybytes.length);
         //写出去
         OutputStream os = s.getOutputStream();
         os.write(responsebytes);
         os.close();
     }
 
-    private  void handle404( Socket s,String uri) throws IOException {
-       byte[] responsebytes = (Util.response_head_404 + StrUtil.format(Util.textFormat_404,uri,uri)).getBytes();
-          //写出去
+    private void handle404(Socket s, String uri) throws IOException {
+        byte[] responsebytes = (Util.response_head_404 + StrUtil.format(Util.textFormat_404, uri, uri)).getBytes();
+        //写出去
         OutputStream os = s.getOutputStream();
         os.write(responsebytes);
         os.close();
     }
-    private  void logJVM() {
-        Map<String,String> infos = new LinkedHashMap<>();
+
+    private void logJVM() {
+        Map<String, String> infos = new LinkedHashMap<>();
         infos.put("Server version", "How2J DiyTomcat/1.0.1");
         infos.put("Server built", "2020-04-08 10:20:22");
         infos.put("Server number", "1.0.1");
@@ -167,7 +167,7 @@ public class Server {
         infos.put("JVM Vendor", SystemUtil.get("java.vm.specification.vendor"));
         Set<String> keys = infos.keySet();
         for (String key : keys) {
-            LogFactory.get().info(key+":\t\t" + infos.get(key));
+            LogFactory.get().info(key + ":\t\t" + infos.get(key));
         }
     }
 }

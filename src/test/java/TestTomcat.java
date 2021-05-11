@@ -17,7 +17,7 @@ public class TestTomcat {
     static int port = 8880;
 //    static String ip = "static.how2j.cn";
     static String ip = "localhost";
-    static String uri = "/A/";
+    static String uri = "/A/1.doc";
     @BeforeClass
     public static void before() {
 //        if (NetUtil.isUsableLocalPort(port)) {
@@ -33,7 +33,8 @@ public class TestTomcat {
         String address = StrUtil.format("http://{}:{}{}",ip,port,uri);
         System.out.println("访问地址：" + address);
         try {
-            return Minibrowser.getContentString(address);
+//            return Minibrowser.getContentString(address);
+            return Minibrowser.getHttpString(address);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -43,10 +44,11 @@ public class TestTomcat {
     @Test
     public void testHelloTomcat() {
         String result = getContent();
-//        System.out.println(result);
-        Assert.assertEquals(result,"Hello DIY Tomcat from timeConsume.html\n");
+        System.out.println(result);
+//        Assert.assertEquals(result,"application/msword");
 //        Assert.assertEquals(result,"Hello DIY Tomcat from timeConsume.html\n");
 //        Assert.assertTrue(result.contains("a deliberately thrown error"));
+        Assert.assertTrue(result.contains("application/msword"));
     }
 
     @Test

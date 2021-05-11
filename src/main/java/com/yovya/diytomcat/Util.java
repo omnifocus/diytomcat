@@ -1,7 +1,5 @@
 package com.yovya.diytomcat;
 
-import cn.hutool.log.LogFactory;
-
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -52,8 +50,8 @@ public class Util {
 
     public static void main(String[] args) {
         //获取到的就是项目的根目录
-        System.out.println(System.getProperty("user.dir"));
-        LogFactory.get().info("{}","xx");
+//        System.out.println(System.getProperty("user.dir"));
+//        LogFactory.get().info("{}","xx");
     }
 
 

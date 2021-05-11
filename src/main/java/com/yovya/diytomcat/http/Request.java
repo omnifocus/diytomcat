@@ -3,6 +3,7 @@ package com.yovya.diytomcat.http;
 import cn.hutool.core.util.StrUtil;
 import com.yovya.diytomcat.Minibrowser;
 import com.yovya.diytomcat.catalina.Context;
+import com.yovya.diytomcat.catalina.Host;
 import com.yovya.diytomcat.catalina.Service;
 
 import java.io.IOException;
@@ -23,31 +24,36 @@ public class Request {
         parseRequestString();
         parseUri();
         configureContext();
+        if (!context.getPath().equals("/") ) {
+            uri = StrUtil.removePrefix(uri,context.getPath());
+            if (StrUtil.isEmpty(uri)) {
+                uri = "/";
+            }
+        }
     }
 
 
     private void configureContext() {
-        String name = StrUtil.subBetween(uri, "/", "/");
-        String path = "/";
-        if (name == null) {
-            //可能是a
-            path = uri;
-            //不是文件且path不是/,否则会变为//
-            if (!uri.contains(".") ) {
-                //  后面加上/
-                path = uri ;
-            } else {
-                //可能是a.html
-                path = "/";
-                //默认uri也不变
-            }
-        } else
-             path = "/" + name;
-//        context = host.getContextMap().get(path);
-        context = service.getEngine().getDefaultHost().getContext(path);
-        if (!path.equals("/")) {
-            uri = StrUtil.removePrefix(uri, path);
+        Host host = service.getEngine().getDefaultHost();
+        context = host.getContext(uri);
+        if (context != null) {
+            return;
         }
+        // /a不存在 /a/ /abc.html  /a/abc.html
+        String name = StrUtil.subBetween(uri, "/", "/");
+        if (name == null) {
+            //  /abc.html /a不存在
+            context = host.getContext("/");
+            return;
+        }
+
+        // /a/  /a/abc.html
+        context = host.getContext("/" + name);
+        // /a不存在
+        if (context == null)
+            context = host.getContext("/");
+
+
     }
 
     public static void main(String[] args) {
